@@ -9,7 +9,7 @@ import pycco
 def main(include: Sequence[str], exclude: Sequence[str]) -> None:
     """
     Generate Pycco HTML file tree out of a specific subset of sources. The
-    subset is controlled by expliciti include and exclude patterns.
+    subset is controlled by explicit include and exclude patterns.
     """
     build_dest = Path("./pages")
     if build_dest.exists():
