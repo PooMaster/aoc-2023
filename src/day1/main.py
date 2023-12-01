@@ -1,7 +1,7 @@
-import re
-from typing import Iterable
 from functools import partial
 import logging
+import re
+from typing import Iterable
 
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -21,18 +21,18 @@ digit_dict: dict[str, str] = {
 digit_list = list(digit_dict.keys())
 digit_list.extend("0123456789")
 
-all_digits = '|'.join(digit_list)
+all_digits = "|".join(digit_list)
 digit_pattern = re.compile(f"(?=({all_digits}))")
 
 
-def get_line_digits(line: str, strict=True) -> list[str]:
+def get_line_digits(line: str, strict: bool = True) -> list[str]:
     if strict:
         return re.findall(r"\d", line)
     else:
         return re.findall(digit_pattern, line)
 
 
-def test_get_line_digits():
+def test_get_line_digits() -> None:
     # Part 1
     assert get_line_digits("1abc2") == ["1", "2"]
     assert get_line_digits("pqr3stu8vwx") == ["3", "8"]
@@ -44,12 +44,24 @@ def test_get_line_digits():
     assert get_line_digits("eightwothree", strict=False) == ["eight", "two", "three"]
     assert get_line_digits("abcone2threexyz", strict=False) == ["one", "2", "three"]
     assert get_line_digits("xtwone3four", strict=False) == ["two", "one", "3", "four"]
-    assert get_line_digits("4nineeightseven2", strict=False) == ["4", "nine", "eight", "seven", "2"]
-    assert get_line_digits("zoneight234", strict=False) == ["one", "eight", "2", "3", "4"]
+    assert get_line_digits("4nineeightseven2", strict=False) == [
+        "4",
+        "nine",
+        "eight",
+        "seven",
+        "2",
+    ]
+    assert get_line_digits("zoneight234", strict=False) == [
+        "one",
+        "eight",
+        "2",
+        "3",
+        "4",
+    ]
     assert get_line_digits("7pqrstsixteen", strict=False) == ["7", "six"]
 
 
-def get_line_value(line: str, strict=True) -> int:
+def get_line_value(line: str, strict: bool = True) -> int:
     digits = get_line_digits(line, strict=strict)
 
     logging.debug(digits)
@@ -61,7 +73,7 @@ def get_line_value(line: str, strict=True) -> int:
     return int(digits[0] + digits[-1], 10)
 
 
-def test_get_line_value():
+def test_get_line_value() -> None:
     # Part 1
     assert get_line_value("1abc2") == 12
     assert get_line_value("pqr3stu8vwx") == 38
@@ -78,11 +90,11 @@ def test_get_line_value():
     assert get_line_value("7pqrstsixteen", strict=False) == 76
 
 
-def get_calibration_sum(lines: Iterable[str], strict=True) -> int:
+def get_calibration_sum(lines: Iterable[str], strict: bool = True) -> int:
     return sum(map(partial(get_line_value, strict=strict), lines))
 
 
-def test_get_calibration_sum():
+def test_get_calibration_sum() -> None:
     example = """\
         1abc2
         pqr3stu8vwx
@@ -101,19 +113,17 @@ def test_get_calibration_sum():
     assert get_calibration_sum(example.splitlines(), strict=False) == 281
 
 
-def part1(lines: Iterable[str]):
+def part1(lines: Iterable[str]) -> None:
     print("Part1:", get_calibration_sum(lines))
 
 
-def part2(lines: Iterable[str]):
+def part2(lines: Iterable[str]) -> None:
     print("Part2:", get_calibration_sum(lines, strict=False))
 
 
 if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-
     with open("input.txt") as f:
         part1(f)
-        f.seek(0)
+
+    with open("input.txt") as f:
         part2(f)

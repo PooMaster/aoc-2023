@@ -1,0 +1,6 @@
+[flake8]
+select = ANN,B,B9,BLK,C,E,F,I,W
+ignore = E501,W503,ANN101
+max-complexity = 10
+
+import-order-style = google
