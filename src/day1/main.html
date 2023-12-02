@@ -417,7 +417,9 @@ parsing it does.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-26'>#</a>
       </div>
-      <p>Part 1</p>
+      <ul>
+<li>Test cases for part 1</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">get_line_digits</span><span class="p">(</span><span class="s2">&quot;1abc2&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span>
@@ -432,7 +434,9 @@ parsing it does.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-27'>#</a>
       </div>
-      <p>Part 2</p>
+      <ul>
+<li>Test cases for part 2</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">get_line_digits</span><span class="p">(</span><span class="s2">&quot;two1nine&quot;</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;nine&quot;</span><span class="p">]</span>
@@ -468,7 +472,7 @@ parsing it does.</p>
         <a class='octothorpe' href='#section-28'>#</a>
       </div>
       <p>This function takes the digits that are parsed from a line and creates the
-value of the trebuchet calibrate, that being the first and last digit being
+value of the trebuchet calibration, that being the first and last digit
 interpreted as a two digit number.</p>
     </div>
     <div class='code'>
@@ -513,8 +517,8 @@ word versions of the digits to single digit characters here.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-31'>#</a>
       </div>
-      <p>Do get the full calibration sum, just find all the calibration values of
-all the lines and add them up.</p>
+      <p>To get the full calibration sum, just find the calibration value of each
+line and add them up.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">use_words</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></pre></div>
