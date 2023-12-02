@@ -18,14 +18,9 @@ def lint(session: Session) -> None:
     args = session.posargs or locations
     install_with_constraints(
         session,
-        "flake8",
-        "flake8-annotations",
-        "flake8-bandit",
-        "flake8-black",
-        "flake8-bugbear",
-        "flake8-import-order",
+        "ruff",
     )
-    session.run("flake8", *args)
+    session.run("ruff", *args)
 
 
 @nox.session(python=["3.10"])
@@ -49,7 +44,9 @@ def xdoctest(session: Session) -> None:
 
 
 def install_with_constraints(
-    session: Session, *args: str, **kwargs: Any  # noqa: ANN401
+    session: Session,
+    *args: str,
+    **kwargs: Any,  # noqa: ANN401
 ) -> None:
     with tempfile.NamedTemporaryFile(delete=False) as requirements:
         session.run(
