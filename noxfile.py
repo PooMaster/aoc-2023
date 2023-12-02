@@ -7,10 +7,10 @@ from typing import Any
 import nox
 from nox.sessions import Session
 
-nox.options.sessions = "lint", "mypy", "xdoctest"
+nox.options.sessions = "lint", "mypy", "xdoctest", "pytest"
 
 locations = "noxfile.py", "make_pycco_pages.py", "src"
-packages = Path("src").glob("day*")
+packages = list(Path("src").glob("day*"))
 
 
 @nox.session(python=["3.10"])
@@ -42,6 +42,15 @@ def xdoctest(session: Session) -> None:
     install_with_constraints(session, "xdoctest", "pygments")
     for package in packages:
         session.run("python", "-m", "xdoctest", str(package), *args)
+
+
+@nox.session(python=["3.10"])
+def pytest(session: Session) -> None:
+    """Run tests with pytest."""
+    args = session.posargs or []
+    install_with_constraints(session, "pytest")
+    for package in packages:
+        session.run("pytest", *args, str(package / "main.py"))
 
 
 def install_with_constraints(

@@ -35,7 +35,6 @@ recover. On each line, the calibration value can be found by combining the
 
 from __future__ import annotations
 
-import logging
 import re
 from functools import partial
 from pathlib import Path
@@ -233,13 +232,10 @@ def get_line_value(line: str, *, use_words: bool = False) -> int:
     """
     digits = get_line_digits(line, use_words=use_words)
 
-    logging.debug(digits)
-
     if use_words:
         # If spelled out digits are being used, then replace all the english
         # word versions of the digits to single digit characters here.
         digits = [digit_dict.get(d, d) for d in digits]
-        logging.debug(digits)
 
     return int(digits[0] + digits[-1], 10)
 
