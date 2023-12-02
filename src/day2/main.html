@@ -18,13 +18,27 @@
         <a class='octothorpe' href='#section-0'>#</a>
       </div>
       <h3>Part 1:</h3>
-<p><paste in problem description here></p>
+<p>&mdash; Day 2: Cube Conundrum &mdash;</p>
+<p>You&rsquo;re launched high into the atmosphere! The apex of your trajectory just
+barely reaches the surface of a large island floating in the sky. You gently
+land in a fluffy pile of leaves. It&rsquo;s quite cold, but you don&rsquo;t see much snow.
+An Elf runs over to greet you.</p>
+<p>The Elf explains that you&rsquo;ve arrived at <strong>Snow Island</strong> and apologizes for the
+lack of snow. He&rsquo;ll be happy to explain the situation, but it&rsquo;s a bit of a walk,
+so you have some time. They don&rsquo;t get many visitors up here; would you like to
+play a game in the meantime?</p>
+<p>As you walk, the Elf shows you a small bag and some cubes which are either red,
+green, or blue. Each time you play this game, he will hide a secret number of
+cubes of each color in the bag, and your goal is to figure out information about
+the number of cubes.</p>
+<p>To get information, once a bag has been loaded with cubes, the Elf will reach
+into the bag, grab a handful of random cubes, show them to you, and then put
+them back in the bag. He&rsquo;ll do this a few times per game.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
@@ -40,10 +54,20 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>For example:</p>
+      <p>You play several games and record the information from each game (your puzzle
+input). Each game is listed with its ID number (like the <code>11</code> in <code>Game 11:
+...</code>) followed by a semicolon-separated list of subsets of cubes that were
+revealed from the bag (like <code>3 red, 5 green, 4 blue</code>).</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_part1</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Cube</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+<span class="n">Turn</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">[</span><span class="n">Cube</span><span class="p">]</span>
+<span class="n">GameId</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">Game</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">GameId</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Turn</span><span class="p">]]</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -51,6 +75,18 @@
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>For example, the record of a few games might look like this:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_part1</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
       </div>
       
     </div>
@@ -60,28 +96,62 @@
 <span class="s2">        Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue</span>
 <span class="s2">        Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red</span>
 <span class="s2">        Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red</span>
-<span class="s2">        Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green&quot;&quot;&quot;</span>  <span class="c1"># pycco needs this comment</span>
-
-    <span class="n">games</span> <span class="o">=</span> <span class="n">parse_input</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">example</span><span class="p">))</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">games</span><span class="p">))</span></pre></div>
+<span class="s2">        Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green&quot;&quot;&quot;</span>  <span class="c1"># pycco needs this comment</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-3'>
+  <div class='section' id='section-4'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
+        <a class='octothorpe' href='#section-4'>#</a>
       </div>
-      <blockquote>
-<p><code>""</code> results in  <code>...</code>.</p>
-</blockquote>
+      <p>In game 1, three sets of cubes are revealed from the bag (and then put
+back again). The first set is 3 blue cubes and 4 red cubes; the second set
+is 1 red cube, 2 green cubes, and 6 blue cubes; the third set is only 2
+green cubes.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">games</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">parse_input</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">example</span><span class="p">)))</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">sets</span> <span class="o">=</span> <span class="n">games</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">sets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({</span><span class="n">Cube</span><span class="o">.</span><span class="n">blue</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="n">Cube</span><span class="o">.</span><span class="n">red</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">sets</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({</span><span class="n">Cube</span><span class="o">.</span><span class="n">red</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Cube</span><span class="o">.</span><span class="n">green</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Cube</span><span class="o">.</span><span class="n">blue</span><span class="p">:</span> <span class="mi">6</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">sets</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({</span><span class="n">Cube</span><span class="o">.</span><span class="n">green</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>The Elf would first like to know which games would have been possible if
+the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>In the example above, games 1, 2, and 5 would have been possible if the
+bag had been loaded with that configuration. However, game 3 would have
+been impossible because at one point the Elf showed you 20 red cubes at
+once; similarly, game 4 would also have been impossible because the Elf
+showed you 15 blue cubes at once. If you add up the IDs of the games that
+would have been possible, you get 8.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">part1</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">example</span><span class="p">))</span> <span class="o">==</span> <span class="mi">8</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">&lt;end of problem description&gt;</span>
+<span class="sd">Determine which games would have been possible if the bag had been loaded with</span>
+<span class="sd">only 12 red cubes, 13 green cubes, and 14 blue cubes. **What is the sum of the</span>
+<span class="sd">IDs of those games?**</span>
 <span class="sd">#DIVIDER</span>
 <span class="sd">    for line in puzzle_input:</span>
 <span class="sd">        if m := re.search(r&quot;Game (\d+): (.*)&quot;, line):</span>
@@ -92,6 +162,7 @@
 <span class="sd">def parse_turn(turn_str: str) -&gt; Turn:</span>
 <span class="sd">#DIVIDER</span>
 <span class="sd">    def color_count(color_str: str) -&gt; int:</span>
+<span class="sd">#DIVIDER</span>
 <span class="sd">        if m := re.search(rf&quot;(\d+) {color_str}&quot;, turn_str):</span>
 <span class="sd">            return int(m.group(1))</span>
 <span class="sd">        return 0</span>
@@ -121,29 +192,35 @@
         <span class="n">Game</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">8</span> <span class="n">green</span><span class="p">,</span> <span class="mi">6</span> <span class="n">blue</span><span class="p">,</span> <span class="mi">20</span> <span class="n">red</span><span class="p">;</span> <span class="mi">5</span> <span class="n">blue</span><span class="p">,</span> <span class="mi">4</span> <span class="n">red</span><span class="p">,</span> <span class="mi">13</span> <span class="n">green</span><span class="p">;</span> <span class="mi">5</span> <span class="n">green</span><span class="p">,</span> <span class="mi">1</span> <span class="n">red</span>
         <span class="n">Game</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">1</span> <span class="n">green</span><span class="p">,</span> <span class="mi">3</span> <span class="n">red</span><span class="p">,</span> <span class="mi">6</span> <span class="n">blue</span><span class="p">;</span> <span class="mi">3</span> <span class="n">green</span><span class="p">,</span> <span class="mi">6</span> <span class="n">red</span><span class="p">;</span> <span class="mi">3</span> <span class="n">green</span><span class="p">,</span> <span class="mi">15</span> <span class="n">blue</span><span class="p">,</span> <span class="mi">14</span> <span class="n">red</span>
         <span class="n">Game</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">6</span> <span class="n">red</span><span class="p">,</span> <span class="mi">1</span> <span class="n">blue</span><span class="p">,</span> <span class="mi">3</span> <span class="n">green</span><span class="p">;</span> <span class="mi">2</span> <span class="n">blue</span><span class="p">,</span> <span class="mi">1</span> <span class="n">red</span><span class="p">,</span> <span class="mi">2</span> <span class="n">green</span><span class="s2">&quot;&quot;&quot;  # pycco needs this comment</span>
+
+<span class="s2">    games = list(parse_input(io.StringIO(example)))</span>
+<span class="s2">#DIVIDER</span>
+<span class="s2">    assert get_min_bag(games[0][1]) == Counter({Cube.red: 4, Cube.green: 2, Cube.blue: 6})</span>
+<span class="s2">#DIVIDER</span>
+<span class="s2">    assert get_min_bag(games[1][1]) == Counter({Cube.red: 1, Cube.green: 3, Cube.blue: 4})</span>
+<span class="s2">#DIVIDER</span>
+<span class="s2">    assert get_min_bag(games[2][1]) == Counter({Cube.red: 20, Cube.green: 13, Cube.blue: 6})</span>
+<span class="s2">#DIVIDER</span>
+<span class="s2">    assert get_min_bag(games[3][1]) == Counter({Cube.red: 14, Cube.green: 3, Cube.blue: 15})</span>
+<span class="s2">#DIVIDER</span>
+<span class="s2">    assert get_min_bag(games[4][1]) == Counter({Cube.red: 6, Cube.green: 3, Cube.blue: 2})</span>
 <span class="s2">#DIVIDER</span>
 <span class="s2">    assert part2(io.StringIO(example)) == 2286</span>
 
 
 <span class="s2">&quot;&quot;&quot;</span>
-<span class="o">&lt;</span><span class="n">end</span> <span class="n">of</span> <span class="n">problem</span> <span class="n">description</span><span class="o">&gt;</span></pre></div>
+<span class="n">For</span> <span class="n">each</span> <span class="n">game</span><span class="p">,</span> <span class="n">find</span> <span class="n">the</span> <span class="n">minimum</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">cubes</span> <span class="n">that</span> <span class="n">must</span> <span class="n">have</span> <span class="n">been</span> <span class="n">present</span><span class="o">.</span> <span class="o">**</span><span class="n">What</span>
+<span class="ow">is</span> <span class="n">the</span> <span class="nb">sum</span> <span class="n">of</span> <span class="n">the</span> <span class="n">power</span> <span class="n">of</span> <span class="n">these</span> <span class="n">sets</span><span class="err">?</span><span class="o">**</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-4'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <h1>=== Part 1 Solution: ===</h1>
-<p>class Cube(Enum):
-    blue = auto()
-    red = auto()
-    green = auto()</p>
-<p>Turn = Counter[Cube]
-GameId = int
-Game = tuple[GameId, list[Turn]]</p>
-<p>bag_cubes = Counter({Cube.red: 12, Cube.green: 13, Cube.blue: 14})</p>
+      <p>bag_cubes = Counter({Cube.red: 12, Cube.green: 13, Cube.blue: 14})</p>
+<h1>=== Part 1 Solution: ===</h1>
 <p>def parse_input(puzzle_input: TextIO) -&gt; Iterable[Game]:
 Turn a text description of a set of games into Game objects.</p>
     </div>
@@ -155,10 +232,10 @@ Turn a text description of a set of games into Game objects.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-5'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       <p>Turn a text description of a turn into a Turn object.</p>
     </div>
@@ -167,36 +244,36 @@ Turn a text description of a set of games into Game objects.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
-      
+      <p>Return the count of the given color.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="p">(</span><span class="n">bag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">Cube</span><span class="p">))</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
-      <p>Return true iff the given Turn could occur with the given Bag.</p>
+      
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">part2</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
-      
+      <p>Return true iff the given Turn could occur with the given Bag.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">games</span> <span class="o">=</span> <span class="n">parse_input</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">)</span>
@@ -211,12 +288,12 @@ Turn a text description of a set of games into Game objects.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
-      <p><solve part 1></p>
+      
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;input.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">puzzle_input</span><span class="p">:</span>
@@ -224,13 +301,13 @@ Turn a text description of a set of games into Game objects.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-13'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-13'>#</a>
       </div>
-      <h3>Part 2:</h3>
-<p><paste in problem description here></p>
+      <p>Identify which games are composed of all valid turns and return the sum of
+the ID numbers of those valid games.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;input.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">puzzle_input</span><span class="p">:</span>
@@ -240,50 +317,19 @@ Turn a text description of a set of games into Game objects.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
-      </div>
-      
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-12'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-12'>#</a>
-      </div>
-      <p>For example:</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-13'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-13'>#</a>
-      </div>
-      
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
   <div class='section' id='section-14'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-14'>#</a>
       </div>
-      <blockquote>
-<p><code>""</code> results in  <code>...</code>.</p>
-</blockquote>
+      <h3>Part 2:</h3>
+<p>&mdash; Part Two &mdash;</p>
+<p>The Elf says they&rsquo;ve stopped producing snow because they aren&rsquo;t getting any
+<strong>water</strong>! He isn&rsquo;t sure why the water stopped; however, he can show you how to
+get to the water source to check it out for yourself. It&rsquo;s just up ahead!</p>
+<p>As you continue your walk, the Elf poses a second question: in each game you
+played, what is the <strong>fewest number of cubes of each color</strong> that could have
+been in the bag to make the game possible?</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -295,9 +341,7 @@ Turn a text description of a set of games into Game objects.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-15'>#</a>
       </div>
-      <h1>=== Part 2 Solution: ===</h1>
-<p>def get_min_bag(turns: list[Turn]) -&gt; Counter[Cube]:
-Get the minimum bag of cubes for which the given turns would be valid.</p>
+      
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -309,7 +353,7 @@ Get the minimum bag of cubes for which the given turns would be valid.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-16'>#</a>
       </div>
-      <p>Return the power of a set of cubes.</p>
+      <p>Again consider the example games from earlier:</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -333,7 +377,11 @@ Get the minimum bag of cubes for which the given turns would be valid.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-18'>#</a>
       </div>
-      <p><solve part 2></p>
+      <ul>
+<li>In game 1, the game could have been played with as few as 4 red, 2
+  green, and 6 blue cubes. If any color had even one fewer cube, the game
+  would have been impossible.</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -345,7 +393,10 @@ Get the minimum bag of cubes for which the given turns would be valid.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-19'>#</a>
       </div>
-      
+      <ul>
+<li>Game 2 could have been played with a minimum of 1 red, 3 green, and 4
+  blue cubes.</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -357,7 +408,10 @@ Get the minimum bag of cubes for which the given turns would be valid.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-20'>#</a>
       </div>
-      <p>Print out part 1 solution</p>
+      <ul>
+<li>Game 3 must have been played with at least 20 red, 13 green, and 6 blue
+  cubes.</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -368,6 +422,124 @@ Get the minimum bag of cubes for which the given turns would be valid.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <ul>
+<li>Game 4 required at least 14 red, 3 green, and 15 blue cubes.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <ul>
+<li>Game 5 needed no fewer than 6 red, 3 green, and 2 blue cubes in the bag.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>The <strong>power</strong> of a set of cubes is equal to the numbers of red, green, and
+blue cubes multiplied together. The power of the minimum set of cubes in
+game 1 is <code>48</code>. In games 2-5 it was <code>12</code>, <code>1560</code>, <code>630</code>, and <code>36</code>,
+respectively. Adding up these five powers produces the sum <strong><code>2286</code></strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <h1>=== Part 2 Solution: ===</h1>
+<p>def get_min_bag(turns: list[Turn]) -&gt; Counter[Cube]:
+Get the minimum bag of cubes for which the given turns would be valid.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>Return the power of a set of cubes.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>Determine the minimum valid bag for each game and sum up the product of the
+counts of each cube type.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>Print out part 1 solution</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
       </div>
       <p>Print out part 2 solution</p>
     </div>
