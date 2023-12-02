@@ -197,13 +197,13 @@ def test_get_line_digits() -> None:
     parsing it does.
     """
 
-    # Part 1
+    # - Test cases for part 1
     assert get_line_digits("1abc2") == ["1", "2"]
     assert get_line_digits("pqr3stu8vwx") == ["3", "8"]
     assert get_line_digits("a1b2c3d4e5f") == ["1", "2", "3", "4", "5"]
     assert get_line_digits("treb7uchet") == ["7"]
 
-    # Part 2
+    # - Test cases for part 2
     assert get_line_digits("two1nine", use_words=True) == ["two", "1", "nine"]
     assert get_line_digits("eightwothree", use_words=True) == ["eight", "two", "three"]
     assert get_line_digits("abcone2threexyz", use_words=True) == ["one", "2", "three"]
@@ -233,7 +233,7 @@ def test_get_line_digits() -> None:
 def get_line_value(line: str, use_words: bool = False) -> int:
     """
     This function takes the digits that are parsed from a line and creates the
-    value of the trebuchet calibrate, that being the first and last digit being
+    value of the trebuchet calibration, that being the first and last digit
     interpreted as a two digit number.
     """
     digits = get_line_digits(line, use_words=use_words)
@@ -251,8 +251,8 @@ def get_line_value(line: str, use_words: bool = False) -> int:
 
 def get_calibration_sum(lines: Iterable[str], use_words: bool = False) -> int:
     """
-    Do get the full calibration sum, just find all the calibration values of
-    all the lines and add them up.
+    To get the full calibration sum, just find the calibration value of each
+    line and add them up.
     """
     return sum(map(partial(get_line_value, use_words=use_words), lines))
 
