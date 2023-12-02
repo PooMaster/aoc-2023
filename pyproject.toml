@@ -39,3 +39,9 @@ ignore = [
     "T201",  # I'm going to print, so deal
     "COM812", "ISC001",  # Recommended to work with the ruff formatter
 ]
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module=["nox.*", "pycco"]
+ignore_missing_imports = true
