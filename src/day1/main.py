@@ -33,17 +33,17 @@ recover. On each line, the calibration value can be found by combining the
 **two-digit number**.
 """
 
-from functools import partial
+from __future__ import annotations
+
 import logging
 import re
+from functools import partial
+from pathlib import Path
 from typing import Iterable
 
 
 def test_part1() -> None:
-    """
-    For example:
-    """
-
+    """For example:"""
     example = """\
         1abc2
         pqr3stu8vwx
@@ -112,10 +112,7 @@ digit on each line.
 
 
 def test_part2() -> None:
-    """
-    For example:
-    """
-
+    """For example:"""
     example = """\
         two1nine
         eightwothree
@@ -163,7 +160,8 @@ optional keyword `use_words` will be used to enable the part 2 behavior.
 """
 
 
-# The substrings that need to be found are the digit words and the digit characters
+# The substrings that need to be found are the digit words and the digit
+# characters
 digit_list = list(digit_dict.keys())
 digit_list.extend("0123456789")
 
@@ -179,16 +177,14 @@ all_digits = "|".join(digit_list)
 digit_pattern = re.compile(f"(?=({all_digits}))")
 
 
-def get_line_digits(line: str, use_words: bool = False) -> list[str]:
-    """
-    Take a line of text and return all the digit substrings found within it.
-    """
+def get_line_digits(line: str, *, use_words: bool = False) -> list[str]:
+    """Take a line of text and return all the digit substrings found within it."""
     if not use_words:
         # For part 1, just return each digit character
         return re.findall(r"\d", line)
-    else:
-        # For part 2, use the compiled digit pattern
-        return re.findall(digit_pattern, line)
+
+    # For part 2, use the compiled digit pattern
+    return re.findall(digit_pattern, line)
 
 
 def test_get_line_digits() -> None:
@@ -196,7 +192,6 @@ def test_get_line_digits() -> None:
     Here are some extra tests for the `get_line_digits()` function to debug the
     parsing it does.
     """
-
     # - Test cases for part 1
     assert get_line_digits("1abc2") == ["1", "2"]
     assert get_line_digits("pqr3stu8vwx") == ["3", "8"]
@@ -230,11 +225,11 @@ def test_get_line_digits() -> None:
     assert get_line_digits("7pqrstsixteen", use_words=True) == ["7", "six"]
 
 
-def get_line_value(line: str, use_words: bool = False) -> int:
+def get_line_value(line: str, *, use_words: bool = False) -> int:
     """
-    This function takes the digits that are parsed from a line and creates the
-    value of the trebuchet calibration, that being the first and last digit
-    interpreted as a two digit number.
+    Take the digits that are parsed from a line and creates the value of the
+    trebuchet calibration, that being the first and last digit interpreted as a
+    two digit number.
     """
     digits = get_line_digits(line, use_words=use_words)
 
@@ -249,7 +244,7 @@ def get_line_value(line: str, use_words: bool = False) -> int:
     return int(digits[0] + digits[-1], 10)
 
 
-def get_calibration_sum(lines: Iterable[str], use_words: bool = False) -> int:
+def get_calibration_sum(lines: Iterable[str], *, use_words: bool = False) -> int:
     """
     To get the full calibration sum, just find the calibration value of each
     line and add them up.
@@ -258,23 +253,18 @@ def get_calibration_sum(lines: Iterable[str], use_words: bool = False) -> int:
 
 
 def part1(lines: Iterable[str]) -> None:
-    """
-    Part 1 just gets the normal calibration sum.
-    """
+    """Part 1 just gets the normal calibration sum."""
     print("Part1:", get_calibration_sum(lines))
 
 
 def part2(lines: Iterable[str]) -> None:
-    """
-    Part 2 just gets the normal calibration sum with spelled out digits
-    included.
-    """
+    """Part 2 gets the calibration sum with spelled out digits included."""
     print("Part2:", get_calibration_sum(lines, use_words=True))
 
 
 if __name__ == "__main__":
-    with open("input.txt") as f:
+    with Path("input.txt").open() as f:
         part1(f)
 
-    with open("input.txt") as f:
+    with Path("input.txt").open() as f:
         part2(f)

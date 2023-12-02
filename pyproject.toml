@@ -27,3 +27,15 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "DEBUG"
+
+[tool.ruff]
+line-length = 120
+select = ["ALL"]
+ignore = [
+    "D203",
+    "D212", "D205", "D400", "D415",  # Don't tell me how to docstring
+    "S101",  # I need asserts for pytest
+    "PLR2004",  # I use magic numbers in pytests
+    "T201",  # I'm going to print, so deal
+    "COM812", "ISC001",  # Recommended to work with the ruff formatter
+]

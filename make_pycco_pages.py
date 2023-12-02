@@ -1,3 +1,5 @@
+"""Creates HTML pages from Python sources files using Pycco."""
+
 import argparse
 from pathlib import Path
 from shutil import rmtree
@@ -23,15 +25,19 @@ def main(include: Sequence[str], exclude: Sequence[str]) -> None:
     all_exclude.extend([".git", ".gitignore", ".github"])
     all_exclude.extend(exclude)
 
-    source_files = find_files(Path("."), include=include, exclude=all_exclude)
+    source_files = find_files(Path(), include=include, exclude=all_exclude)
 
     pycco.process(
-        sources=[str(f) for f in source_files], outdir=str(build_dest), index=True
+        sources=[str(f) for f in source_files],
+        outdir=str(build_dest),
+        index=True,
     )
 
 
 def find_files(
-    path: Path, include: Sequence[str], exclude: Sequence[str] = ()
+    path: Path,
+    include: Sequence[str],
+    exclude: Sequence[str] = (),
 ) -> Generator[Path, None, None]:
     """
     Find all files in a path that match one of the include patterns while not
@@ -45,16 +51,16 @@ def find_files(
         if item.is_dir():
             # Recursively look for files
             yield from find_files(item, include, exclude)
-        else:
-            # See if any files match the include patterns
-            if any(item.match(pattern) for pattern in include):
-                yield item
+        elif any(item.match(pattern) for pattern in include):
+            # Yield any file that matches the include patterns
+            yield item
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--include", help="Comma separated list of file patterns to include"
+        "--include",
+        help="Comma separated list of file patterns to include",
     )
     parser.add_argument(
         "--exclude",
