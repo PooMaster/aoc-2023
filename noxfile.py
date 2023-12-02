@@ -47,10 +47,13 @@ def xdoctest(session: Session) -> None:
 @nox.session(python=["3.10"])
 def pytest(session: Session) -> None:
     """Run tests with pytest."""
-    args = session.posargs or []
     install_with_constraints(session, "pytest")
-    for package in packages:
-        session.run("pytest", *args, str(package / "main.py"))
+    if session.posargs:
+        for arg in session.posargs:
+            session.run("pytest", arg)
+    else:
+        for package in packages:
+            session.run("pytest", str(package / "main.py"))
 
 
 def install_with_constraints(
