@@ -5,6 +5,7 @@
 """
 
 import io
+from pathlib import Path
 from typing import TextIO
 
 
@@ -21,9 +22,9 @@ def test_part1() -> None:
 # === Part 1 Solution: ===
 
 
-def part1(input: TextIO) -> ...:
-    """ """
-    return ...
+def part1(puzzle_input: TextIO) -> ...:
+    """<solve part 1>"""
+    return puzzle_input
 
 
 """
@@ -46,16 +47,16 @@ def test_part2() -> None:
 # === Part 2 Solution: ===
 
 
-def part2(input: TextIO) -> ...:
-    """ """
-    return ...
+def part2(puzzle_input: TextIO) -> ...:
+    """<solve part 2>"""
+    return puzzle_input
 
 
 if __name__ == "__main__":
     # Print out part 1 solution
-    with open("input.txt") as puzzle_input:
+    with Path("input.txt").open() as puzzle_input:
         print("Part 1:", part1(puzzle_input))
 
     # Print out part 2 solution
-    with open("input.txt") as puzzle_input:
+    with Path("input.txt").open() as puzzle_input:
         print("Part 2:", part2(puzzle_input))
