@@ -38,6 +38,7 @@ ignore = [
     "PLR2004",  # I use magic numbers in pytests
     "T201",  # I'm going to print, so deal
     "COM812", "ISC001",  # Recommended to work with the ruff formatter
+    "D101",  # Maybe I don't want to put a docstring on a tiny class
 ]
 
 [tool.mypy]
