@@ -56,18 +56,6 @@ recover. On each line, the calibration value can be found by combining the
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>logging.basicConfig(level=logging.DEBUG)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-2'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-2'>#</a>
-      </div>
       <p>For example:</p>
     </div>
     <div class='code'>
@@ -75,10 +63,10 @@ recover. On each line, the calibration value can be found by combining the
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-3'>
+  <div class='section' id='section-2'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
+        <a class='octothorpe' href='#section-2'>#</a>
       </div>
       <p>In this example, the calibration values of these four lines are <code>12</code>, <code>38</code>,
 <code>15</code>, and <code>77</code>.</p>
@@ -94,10 +82,10 @@ recover. On each line, the calibration value can be found by combining the
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-4'>
+  <div class='section' id='section-3'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
+        <a class='octothorpe' href='#section-3'>#</a>
       </div>
       <p>Adding these together produces <strong><code>142</code></strong>.</p>
     </div>
@@ -110,10 +98,10 @@ recover. On each line, the calibration value can be found by combining the
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-5'>
+  <div class='section' id='section-4'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
+        <a class='octothorpe' href='#section-4'>#</a>
       </div>
       <p>Consider your entire calibration document. <strong>What is the sum of all of the
 calibration values?</strong></p>
@@ -123,12 +111,24 @@ calibration values?</strong></p>
     </div>
   </div>
   <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
   <div class='section' id='section-6'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-6'>#</a>
       </div>
-      
+      <h3><span id="part-1-solution:" href="part-1-solution:"> Part 1 Solution: </span></h3>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -140,7 +140,12 @@ calibration values?</strong></p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <h3><span id="part-1-solution:" href="part-1-solution:"> Part 1 Solution: </span></h3>
+      <p>Since this problem involves scanning through text searching for strings, I
+immediately am looking into using <code>re.findall()</code>. For part 1, this is super
+straightforward since the pattern is just <code>"\\d"</code> to grab just the digit
+characters.</p>
+<p>Since my part 2 solution is so intertwined with the part 1 solution, I&rsquo;ll just
+go straight into the part 2 description.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -151,23 +156,6 @@ calibration values?</strong></p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-8'>#</a>
-      </div>
-      <p>Since this problem involves scanning through text searching for strings, I
-immediately am looking into using <code>re.findall()</code>. For part 1, this is super
-straightforward since the pattern is just <code>"\\d"</code> to grab just the digit
-characters.</p>
-<p>Since the part 2 solution is so intertwined with the part 1 solution, I&rsquo;ll just
-go straight into the part 2 description.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-9'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <h3>Part 2:</h3>
 <p>Your calculation isn&rsquo;t quite right. It looks like some of the digits are
@@ -189,10 +177,10 @@ actually <strong>spelled out with letters</strong>: <code>one</code>, <code>two<
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <p>Equipped with this new information, you now need to find the real first and last
 digit on each line.</p>
@@ -202,10 +190,10 @@ digit on each line.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       <p>For example:</p>
     </div>
@@ -214,10 +202,10 @@ digit on each line.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-12'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-12'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
       <p>In this example, the calibration values are <code>29</code>, <code>83</code>, <code>13</code>, <code>24</code>, <code>42</code>,
 <code>14</code>, and <code>76</code>.</p>
@@ -236,10 +224,10 @@ digit on each line.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-13'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-13'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
       <p>Adding these together produces <strong><code>281</code></strong>.</p>
     </div>
@@ -255,10 +243,10 @@ digit on each line.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-14'>
+  <div class='section' id='section-13'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-14'>#</a>
+        <a class='octothorpe' href='#section-13'>#</a>
       </div>
       <p><strong>What is the sum of all of the calibration values?</strong></p>
     </div>
@@ -267,12 +255,24 @@ digit on each line.</p>
     </div>
   </div>
   <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
   <div class='section' id='section-15'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-15'>#</a>
       </div>
-      
+      <h3><span id="part-2-solution:" href="part-2-solution:"> Part 2 Solution: </span></h3>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -283,18 +283,6 @@ digit on each line.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-16'>#</a>
-      </div>
-      <h3><span id="part-2-solution:" href="part-2-solution:"> Part 2 Solution: </span></h3>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-17'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-17'>#</a>
       </div>
       <p>The key different with part 2 is that the strings being searched for can now be
 multiple characters long. Thankfully, this will also be pretty simple to
@@ -308,10 +296,10 @@ optional keyword <code>use_words</code> will be used to enable the part 2 behavi
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-18'>
+  <div class='section' id='section-17'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-18'>#</a>
+        <a class='octothorpe' href='#section-17'>#</a>
       </div>
       <p>The substrings that need to be found are the digit words and the digit characters</p>
     </div>
@@ -321,17 +309,32 @@ optional keyword <code>use_words</code> will be used to enable the part 2 behavi
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-19'>
+  <div class='section' id='section-18'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-19'>#</a>
+        <a class='octothorpe' href='#section-18'>#</a>
       </div>
       <p>All the possible values should be in the regex pattern separated by a pipe
 (<code>|</code>) to designate them all as alternatives</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="n">all_digits</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">digit_list</span><span class="p">)</span>
-<span class="n">digit_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(?=(</span><span class="si">{</span><span class="n">all_digits</span><span class="si">}</span><span class="s2">))&quot;</span><span class="p">)</span></pre></div>
+      <div class="highlight"><pre><span class="n">all_digits</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">digit_list</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>Then all the pattern of all possible digit substrings should be put in a
+zero-width positive lookahead group. This is a little trick to allow for one
+capture group to overlap with another. The prompt was not specific about if
+this should be allowed, but experimentation proved that it was required to
+complete the puzzle.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">digit_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(?=(</span><span class="si">{</span><span class="n">all_digits</span><span class="si">}</span><span class="s2">))&quot;</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -464,19 +467,12 @@ parsing it does.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-28'>#</a>
       </div>
-      
+      <p>This function takes the digits that are parsed from a line and creates the
+value of the trebuchet calibrate, that being the first and last digit being
+interpreted as a two digit number.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_line_value</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">use_words</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="n">digits</span> <span class="o">=</span> <span class="n">get_line_digits</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="n">use_words</span><span class="p">)</span>
-
-    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">use_words</span><span class="p">:</span>
-        <span class="n">digits</span> <span class="o">=</span> <span class="p">[</span><span class="n">digit_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">digits</span><span class="p">]</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">digits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">10</span><span class="p">)</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_line_value</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">use_words</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -488,8 +484,11 @@ parsing it does.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">use_words</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">get_line_value</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="n">use_words</span><span class="p">),</span> <span class="n">lines</span><span class="p">))</span></pre></div>
+      <div class="highlight"><pre>    <span class="n">digits</span> <span class="o">=</span> <span class="n">get_line_digits</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="n">use_words</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_words</span><span class="p">:</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -498,11 +497,14 @@ parsing it does.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-30'>#</a>
       </div>
-      
+      <p>If spelled out digits are being used, then replace all the english
+word versions of the digits to single digit characters here.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part1</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part1:&quot;</span><span class="p">,</span> <span class="n">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span></pre></div>
+      <div class="highlight"><pre>        <span class="n">digits</span> <span class="o">=</span> <span class="p">[</span><span class="n">digit_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">digits</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">digits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">10</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -511,11 +513,72 @@ parsing it does.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-31'>#</a>
       </div>
+      <p>Do get the full calibration sum, just find all the calibration values of
+all the lines and add them up.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">use_words</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part2</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part2:&quot;</span><span class="p">,</span> <span class="n">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">get_line_value</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="n">use_words</span><span class="p">),</span> <span class="n">lines</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>Part 1 just gets the normal calibration sum.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part1</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part1:&quot;</span><span class="p">,</span> <span class="n">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <p>Part 2 just gets the normal calibration sum with spelled out digits
+included.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part2</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part2:&quot;</span><span class="p">,</span> <span class="n">get_calibration_sum</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">use_words</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
