@@ -38,8 +38,6 @@ import logging
 import re
 from typing import Iterable
 
-# logging.basicConfig(level=logging.DEBUG)
-
 
 def test_part1() -> None:
     """
@@ -83,7 +81,7 @@ immediately am looking into using `re.findall()`. For part 1, this is super
 straightforward since the pattern is just `"\\d"` to grab just the digit
 characters.
 
-Since the part 2 solution is so intertwined with the part 1 solution, I'll just
+Since my part 2 solution is so intertwined with the part 1 solution, I'll just
 go straight into the part 2 description.
 """
 
@@ -172,6 +170,12 @@ digit_list.extend("0123456789")
 # All the possible values should be in the regex pattern separated by a pipe
 # (`|`) to designate them all as alternatives
 all_digits = "|".join(digit_list)
+
+# Then all the pattern of all possible digit substrings should be put in a
+# zero-width positive lookahead group. This is a little trick to allow for one
+# capture group to overlap with another. The prompt was not specific about if
+# this should be allowed, but experimentation proved that it was required to
+# complete the puzzle.
 digit_pattern = re.compile(f"(?=({all_digits}))")
 
 
@@ -227,11 +231,18 @@ def test_get_line_digits() -> None:
 
 
 def get_line_value(line: str, use_words: bool = False) -> int:
+    """
+    This function takes the digits that are parsed from a line and creates the
+    value of the trebuchet calibrate, that being the first and last digit being
+    interpreted as a two digit number.
+    """
     digits = get_line_digits(line, use_words=use_words)
 
     logging.debug(digits)
 
     if use_words:
+        # If spelled out digits are being used, then replace all the english
+        # word versions of the digits to single digit characters here.
         digits = [digit_dict.get(d, d) for d in digits]
         logging.debug(digits)
 
@@ -239,14 +250,25 @@ def get_line_value(line: str, use_words: bool = False) -> int:
 
 
 def get_calibration_sum(lines: Iterable[str], use_words: bool = False) -> int:
+    """
+    Do get the full calibration sum, just find all the calibration values of
+    all the lines and add them up.
+    """
     return sum(map(partial(get_line_value, use_words=use_words), lines))
 
 
 def part1(lines: Iterable[str]) -> None:
+    """
+    Part 1 just gets the normal calibration sum.
+    """
     print("Part1:", get_calibration_sum(lines))
 
 
 def part2(lines: Iterable[str]) -> None:
+    """
+    Part 2 just gets the normal calibration sum with spelled out digits
+    included.
+    """
     print("Part2:", get_calibration_sum(lines, use_words=True))
 
 
