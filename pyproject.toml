@@ -33,13 +33,14 @@ line-length = 120
 select = ["ALL"]
 ignore = [
     "D203",
-    "D212", "D205", "D400", "D415",  # Don't tell me how to docstring
+    "D212", "D205", "D400", "D415", "D102",  # Don't tell me how to docstring
     "S101",  # I need asserts for pytest
     "PLR2004",  # I use magic numbers in pytests
     "T201",  # I'm going to print, so deal
     "COM812", "ISC001",  # Recommended to work with the ruff formatter
     "D101",  # Maybe I don't want to put a docstring on a tiny class
     "D103", "D105",  # Make docstrings optional
+    "ANN102",  # Don't make me type cls
 ]
 
 [tool.mypy]
