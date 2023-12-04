@@ -73,7 +73,7 @@
 <span class="s2">    x: int</span>
 <span class="s2">    y: int</span>
 <span class="s2">#DIVIDER</span>
-<span class="s2">    def __add__(self: Pos, other: Pos) -&gt; Pos:</span>
+<span class="s2">    def __add__(self: Pos, other: Pos) -&gt; Pos:  # type: ignore[override]</span>
 <span class="s2">        return Pos(self.x + other.x, self.y + other.y)</span>
 <span class="s2">#DIVIDER</span>
 <span class="s2">class Label(NamedTuple):</span>
@@ -113,7 +113,7 @@
 <span class="s2">def pos_adjacencies(pos: Pos) -&gt; Iterable[Pos]:</span>
 <span class="s2">    yield from (pos + adj for adj in adjacents)</span>
 <span class="s2">#DIVIDER</span>
-<span class="s2">def part1(puzzle_input: TextIO) -&gt; ...:</span>
+<span class="s2">def part1(puzzle_input: TextIO) -&gt; int:</span>
 <span class="s2">#DIVIDER</span>
 <span class="s2">    labels, symbols = parse_schematic(puzzle_input)</span>
 
@@ -399,7 +399,7 @@
         <a class='octothorpe' href='#section-21'>#</a>
       </div>
       <h1>=== Part 2 Solution: ===</h1>
-<p>def part2(puzzle_input: TextIO) -&gt; &hellip;:
+<p>def part2(puzzle_input: TextIO) -&gt; int:
 <solve part 2></p>
     </div>
     <div class='code'>
