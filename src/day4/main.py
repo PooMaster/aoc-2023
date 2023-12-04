@@ -10,7 +10,7 @@ import logging
 import re
 from collections import Counter
 from pathlib import Path
-from typing import Iterable, NamedTuple, TextIO
+from typing import Iterable, NamedTuple, TextIO, TypeVar
 
 
 def test_part1() -> None:
@@ -46,6 +46,7 @@ class Card(NamedTuple):
 
 line_pattern = re.compile(r"Card +(\d+): ([\d ]+) \| ([\d ]+)")
 
+
 def parse_cards(puzzle_input: TextIO) -> Iterable[Card]:
     for line in puzzle_input:
         if m := line_pattern.fullmatch(line.strip()):
@@ -66,7 +67,7 @@ def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
     cards = parse_cards(puzzle_input)
     win_count = (card_win_count(c) for c in cards)
-    points = ((0 if wc == 0 else 2 ** (wc-1)) for wc in win_count)
+    points = ((0 if wc == 0 else 2 ** (wc - 1)) for wc in win_count)
 
     return sum(points)
 
@@ -112,11 +113,15 @@ def card_copy_winnings(card: Card) -> Counter[int]:
     return Counter(range(card.number + 1, card.number + wins + 1))
 
 
-def counter_multiply(counter: Counter[int], multiplier: int) -> Counter[int]:
-    return Counter({k: count*multiplier for k, count in counter.items()})
+T = TypeVar("T")
+
+
+def counter_multiply(counter: Counter[T], multiplier: int) -> Counter[T]:
+    return Counter({k: count * multiplier for k, count in counter.items()})
 
 
 def part2(puzzle_input: TextIO) -> int:
+    """<solve part 2>"""
     card_counts: Counter[int] = Counter()
 
     for card in parse_cards(puzzle_input):
@@ -127,7 +132,6 @@ def part2(puzzle_input: TextIO) -> int:
         won_cards = card_copy_winnings(card)
         card_counts += counter_multiply(won_cards, card_counts[card.number])
 
-    """<solve part 2>"""
     return card_counts.total()
 
 
