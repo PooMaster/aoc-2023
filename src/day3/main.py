@@ -57,7 +57,7 @@ class Pos(NamedTuple):
     x: int
     y: int
 
-    def __add__(self: Pos, other: Pos) -> Pos:
+    def __add__(self: Pos, other: Pos) -> Pos:  # type: ignore[override]
         return Pos(self.x + other.x, self.y + other.y)
 
 
@@ -102,7 +102,7 @@ def pos_adjacencies(pos: Pos) -> Iterable[Pos]:
     yield from (pos + adj for adj in adjacents)
 
 
-def part1(puzzle_input: TextIO) -> ...:
+def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
     labels, symbols = parse_schematic(puzzle_input)
 
@@ -145,7 +145,7 @@ def test_part2() -> None:
 # === Part 2 Solution: ===
 
 
-def part2(puzzle_input: TextIO) -> ...:
+def part2(puzzle_input: TextIO) -> int:
     """<solve part 2>"""
     labels, symbols = parse_schematic(puzzle_input)
 
