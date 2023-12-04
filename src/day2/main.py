@@ -51,7 +51,7 @@ Game = tuple[GameId, list[Turn]]
 
 def test_part1() -> None:
     """For example, the record of a few games might look like this:"""
-    example = """
+    example = """\
         Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
         Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
         Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -147,33 +147,34 @@ been in the bag to make the game possible?
 
 def test_part2() -> None:
     """Again consider the example games from earlier:"""
-    example = """
+    example = """\
         Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
         Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
         Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
         Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
         Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"""  # pycco needs this comment
 
-    games = list(parse_input(io.StringIO(example)))
+    games = parse_input(io.StringIO(example))
+    game_iter = iter(games)
 
     # - In game 1, the game could have been played with as few as 4 red, 2
     #   green, and 6 blue cubes. If any color had even one fewer cube, the game
     #   would have been impossible.
-    assert get_min_bag(games[0][1]) == Counter({Cube.red: 4, Cube.green: 2, Cube.blue: 6})
+    assert get_min_bag(next(game_iter)[1]) == Counter({Cube.red: 4, Cube.green: 2, Cube.blue: 6})
 
     # - Game 2 could have been played with a minimum of 1 red, 3 green, and 4
     #   blue cubes.
-    assert get_min_bag(games[1][1]) == Counter({Cube.red: 1, Cube.green: 3, Cube.blue: 4})
+    assert get_min_bag(next(game_iter)[1]) == Counter({Cube.red: 1, Cube.green: 3, Cube.blue: 4})
 
     # - Game 3 must have been played with at least 20 red, 13 green, and 6 blue
     #   cubes.
-    assert get_min_bag(games[2][1]) == Counter({Cube.red: 20, Cube.green: 13, Cube.blue: 6})
+    assert get_min_bag(next(game_iter)[1]) == Counter({Cube.red: 20, Cube.green: 13, Cube.blue: 6})
 
     # - Game 4 required at least 14 red, 3 green, and 15 blue cubes.
-    assert get_min_bag(games[3][1]) == Counter({Cube.red: 14, Cube.green: 3, Cube.blue: 15})
+    assert get_min_bag(next(game_iter)[1]) == Counter({Cube.red: 14, Cube.green: 3, Cube.blue: 15})
 
     # - Game 5 needed no fewer than 6 red, 3 green, and 2 blue cubes in the bag.
-    assert get_min_bag(games[4][1]) == Counter({Cube.red: 6, Cube.green: 3, Cube.blue: 2})
+    assert get_min_bag(next(game_iter)[1]) == Counter({Cube.red: 6, Cube.green: 3, Cube.blue: 2})
 
     # The **power** of a set of cubes is equal to the numbers of red, green, and
     # blue cubes multiplied together. The power of the minimum set of cubes in
