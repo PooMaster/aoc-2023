@@ -3,12 +3,12 @@
 import argparse
 from pathlib import Path
 from shutil import rmtree
-from typing import Generator, Sequence
+from typing import Iterator, Sequence
 
 import pycco
 
 
-def main(include: Sequence[str], exclude: Sequence[str]) -> None:
+def main(include: Sequence[str], exclude: Sequence[str], *, force: bool) -> None:
     """
     Generate Pycco HTML file tree out of a specific subset of sources. The
     subset is controlled by explicit include and exclude patterns.
@@ -25,7 +25,7 @@ def main(include: Sequence[str], exclude: Sequence[str]) -> None:
     all_exclude.extend([".git", ".gitignore", ".github"])
     all_exclude.extend(exclude)
 
-    source_files = find_files(Path(), include=include, exclude=all_exclude)
+    source_files = find_files(Path(), include=include, exclude=all_exclude, force=force)
 
     pycco.process(
         sources=[str(f) for f in source_files],
@@ -34,11 +34,7 @@ def main(include: Sequence[str], exclude: Sequence[str]) -> None:
     )
 
 
-def find_files(
-    path: Path,
-    include: Sequence[str],
-    exclude: Sequence[str] = (),
-) -> Generator[Path, None, None]:
+def find_files(path: Path, include: Sequence[str], exclude: Sequence[str] = (), *, force: bool) -> Iterator[Path]:
     """
     Find all files in a path that match one of the include patterns while not
     matching any of the exclude patterns at any level.
@@ -48,9 +44,14 @@ def find_files(
         if any(item.match(pattern) for pattern in exclude):
             continue
 
+        # Ignore any branches that have a ".dontpublish" file
+        if (item.parent / ".dontpublish").is_file() and not force:
+            continue
+
         if item.is_dir():
             # Recursively look for files
-            yield from find_files(item, include, exclude)
+            yield from find_files(item, include, exclude, force=force)
+
         elif any(item.match(pattern) for pattern in include):
             # Yield any file that matches the include patterns
             yield item
@@ -67,8 +68,15 @@ if __name__ == "__main__":
         default="day_template,make_pycco_pages.py,noxfile.py,__init__.py",
         help="Comma separated list of file patterns to exclude",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Comma separated list of file patterns to exclude",
+    )
     args = parser.parse_args()
+
+    print(args.force)
 
     include = args.include.split(",") if args.include else []
     exclude = args.exclude.split(",") if args.exclude else []
-    main(include, exclude)
+    main(include, exclude, force=args.force)
