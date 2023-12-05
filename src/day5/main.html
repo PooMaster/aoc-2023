@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>main.py</title>
+  <link rel="stylesheet" href="../../pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>main.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Part 1:</h3>
+<p>You take the boat and find the gardener right where you were told he would be:
+managing a giant &ldquo;garden&rdquo; that looks more to you like a farm.</p>
+<p>&ldquo;A water source? Island Island is the water source!&rdquo; You point out that Snow
+Island isn&rsquo;t receiving any water.</p>
+<p>&ldquo;Oh, we had to stop the water because we <strong>ran out of sand</strong> to filter it with!
+Can&rsquo;t make snow with dirty water. Don&rsquo;t worry, I&rsquo;m sure we&rsquo;ll get more sand
+soon; we only turned off the water a few days&hellip; weeks&hellip; oh no.&rdquo; His face sinks
+into a look of horrified realization.</p>
+<p>&ldquo;I&rsquo;ve been so busy making sure everyone here has food that I completely forgot
+to check why we stopped getting more sand! There&rsquo;s a ferry leaving soon that is
+headed over in that direction - it&rsquo;s much faster than your boat. Could you
+please go check it out?&rdquo;</p>
+<p>You barely have time to agree to this request when he brings up another. &ldquo;While
+you wait for the ferry, maybe you can help us with our <strong>food production
+problem.</strong> The latest Island Island Almanac just arrived and we&rsquo;re having
+trouble making sense of it.&rdquo;</p>
+<p>The almanac (your puzzle input) lists all of the seeds that need to be planted.
+It also lists what type of soil to use with each kind of seed, what type of
+fertilizer to use with each kind of soil, what type of water to use with each
+kind of fertilizer, and so on. Every type of seed, soil, fertilizer and so on is
+identified with a number, but numbers are reused by each category - that is,
+soil <code>123</code> and fertilizer <code>123</code> aren&rsquo;t necessarily related to each other.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">bisect</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">TextIO</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>For example:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_part1</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">example</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">seeds: 79 14 55 13</span>
+
+<span class="s2">seed-to-soil map:</span>
+<span class="s2">50 98 2</span>
+<span class="s2">52 50 48</span>
+
+<span class="s2">soil-to-fertilizer map:</span>
+<span class="s2">0 15 37</span>
+<span class="s2">37 52 2</span>
+<span class="s2">39 0 15</span>
+
+<span class="s2">fertilizer-to-water map:</span>
+<span class="s2">49 53 8</span>
+<span class="s2">0 11 42</span>
+<span class="s2">42 0 7</span>
+<span class="s2">57 7 4</span>
+
+<span class="s2">water-to-light map:</span>
+<span class="s2">88 18 7</span>
+<span class="s2">18 25 70</span>
+
+<span class="s2">light-to-temperature map:</span>
+<span class="s2">45 77 23</span>
+<span class="s2">81 45 19</span>
+<span class="s2">68 64 13</span>
+
+<span class="s2">temperature-to-humidity map:</span>
+<span class="s2">0 69 1</span>
+<span class="s2">1 0 69</span>
+
+<span class="s2">humidity-to-location map:</span>
+<span class="s2">60 56 37</span>
+<span class="s2">56 93 4&quot;&quot;&quot;</span>  <span class="c1"># pycco needs this</span>
+
+    <span class="n">almanac</span> <span class="o">=</span> <span class="n">parse_almanac</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">example</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>The almanac starts by listing which seeds need to be planted: seeds <code>79</code>,
+<code>14</code>, <code>55</code>, and <code>13</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">almanac</span><span class="o">.</span><span class="n">seeds</span> <span class="o">==</span> <span class="p">[</span><span class="mi">79</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">13</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>The rest of the almanac contains a list of <strong>maps</strong> which describe how to
+convert numbers from a <strong>source category</strong> into numbers in a <strong>destination
+category</strong>. That is, the section that starts with <code>seed-to-soil map:</code>
+describes how to convert a <strong>seed number</strong> (the source) to a <strong>soil number</strong>
+(the destination). This lets the gardener and his team know which soil to
+use with which seeds, which water to use with which fertilizer, and so on.</p>
+<p>Rather than list every source number and its corresponding destination
+number one by one, the maps describe entire <strong>ranges</strong> of numbers that can
+be converted. Each line within a map contains three numbers: the
+<strong>destination range start</strong>, the <strong>source range start</strong>, and the <strong>range
+length</strong>.</p>
+<p>Consider again the example <code>seed-to-soil map:</code></p>
+<pre><code>50 98 2
+52 50 48
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">seed_to_soil</span> <span class="o">=</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">[(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="s2">&quot;soil&quot;</span><span class="p">)]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>The first line has a destination range start of <code>50</code>, a <strong>source range
+start</strong> of <code>98</code>, and a <strong>range length</strong> of <code>2</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">first_line</span> <span class="o">=</span> <span class="n">IntervalOffset</span><span class="o">.</span><span class="n">from_line</span><span class="p">(</span><span class="s2">&quot;50 98 2&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>This line means that the source range starts at <code>98</code> and contains two
+values: <code>98</code> and <code>99</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">first_line</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">98</span><span class="p">,</span> <span class="mi">99</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>The destination range is the same length, but it starts at <code>50</code>, so its
+two values are <code>50</code> and <code>51</code>. With this information, you know that seed
+number <code>98</code> corresponds to soil number <code>50</code> and that seed number <code>99</code>
+corresponds to soil number <code>51</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">98</span><span class="p">)</span> <span class="o">==</span> <span class="mi">50</span>
+    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="mi">51</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>The second line means that the source range starts at <code>50</code> and contains <code>48</code>
+values: <code>50</code>, <code>51</code>, &hellip;, <code>96</code>, <code>97</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">second_line</span> <span class="o">=</span> <span class="n">IntervalOffset</span><span class="o">.</span><span class="n">from_line</span><span class="p">(</span><span class="s2">&quot;52 50 48&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">second_line</span><span class="o">.</span><span class="n">interval</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">second_line</span><span class="o">.</span><span class="n">interval</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">96</span><span class="p">,</span> <span class="mi">97</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>This corresponds to a destination range starting at <code>52</code> and also
+containing <code>48</code> values: <code>52</code>, <code>53</code>, &hellip;, <code>98</code>, <code>99</code>. So, seed number <code>53</code>
+corresponds to soil number <code>55</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">53</span><span class="p">)</span> <span class="o">==</span> <span class="mi">55</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Any source numbers that <strong>aren&rsquo;t mapped</strong> correspond to the <strong>same</strong>
+destination number. So, seed number 10 corresponds to soil number 10.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>So, the entire list of seed numbers and their corresponding soil numbers looks like this:</p>
+<pre><code>seed  soil
+0     0
+1     1
+...   ...
+48    48
+49    49
+50    52
+51    53
+...   ...
+96    98
+97    99
+98    50
+99    51
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>With this map, you can look up the soil number required for each initial seed number:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <blockquote>
+<p>Seed number 79 corresponds to soil number 81.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">==</span> <span class="mi">81</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <blockquote>
+<p>Seed number 14 corresponds to soil number 14.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span> <span class="o">==</span> <span class="mi">14</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <blockquote>
+<p>Seed number 55 corresponds to soil number 57.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">55</span><span class="p">)</span> <span class="o">==</span> <span class="mi">57</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <blockquote>
+<p>Seed number 13 corresponds to soil number 13.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">seed_to_soil</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>The gardener and his team want to get started as soon as possible, so
+they&rsquo;d like to know the closest location that needs a seed. Using these
+maps, find <strong>the lowest location number that corresponds to any of the
+initial seeds</strong>. To do this, you&rsquo;ll need to convert each seed number
+through other categories until you can find its corresponding <strong>location
+number</strong>. In this example, the corresponding types are:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <blockquote>
+<p>Seed <code>79</code>, soil <code>81</code>, fertilizer <code>81</code>, water <code>81</code>, light <code>74</code>, temperature <code>78</code>, humidity <code>78</code>, location <code>82</code>.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">walk_maps</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">79</span><span class="p">,</span>
+        <span class="s2">&quot;soil&quot;</span><span class="p">:</span> <span class="mi">81</span><span class="p">,</span>
+        <span class="s2">&quot;fertilizer&quot;</span><span class="p">:</span> <span class="mi">81</span><span class="p">,</span>
+        <span class="s2">&quot;water&quot;</span><span class="p">:</span> <span class="mi">81</span><span class="p">,</span>
+        <span class="s2">&quot;light&quot;</span><span class="p">:</span> <span class="mi">74</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">78</span><span class="p">,</span>
+        <span class="s2">&quot;humidity&quot;</span><span class="p">:</span> <span class="mi">78</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">,</span>
+    <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <blockquote>
+<p>Seed <code>14</code>, soil <code>14</code>, fertilizer <code>53</code>, water <code>49</code>, light <code>42</code>, temperature <code>42</code>, humidity <code>43</code>, location <code>43</code>.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">walk_maps</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+        <span class="s2">&quot;soil&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+        <span class="s2">&quot;fertilizer&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
+        <span class="s2">&quot;water&quot;</span><span class="p">:</span> <span class="mi">49</span><span class="p">,</span>
+        <span class="s2">&quot;light&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="s2">&quot;humidity&quot;</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span>
+    <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <blockquote>
+<p>Seed <code>55</code>, soil <code>57</code>, fertilizer <code>57</code>, water <code>53</code>, light <code>46</code>, temperature <code>82</code>, humidity <code>82</code>, location <code>86</code>.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">walk_maps</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+        <span class="s2">&quot;soil&quot;</span><span class="p">:</span> <span class="mi">57</span><span class="p">,</span>
+        <span class="s2">&quot;fertilizer&quot;</span><span class="p">:</span> <span class="mi">57</span><span class="p">,</span>
+        <span class="s2">&quot;water&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
+        <span class="s2">&quot;light&quot;</span><span class="p">:</span> <span class="mi">46</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">,</span>
+        <span class="s2">&quot;humidity&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+    <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <blockquote>
+<p>Seed <code>13</code>, soil <code>13</code>, fertilizer <code>52</code>, water <code>41</code>, light <code>34</code>, temperature <code>34</code>, humidity <code>35</code>, location <code>35</code>.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">walk_maps</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s2">&quot;soil&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s2">&quot;fertilizer&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+        <span class="s2">&quot;water&quot;</span><span class="p">:</span> <span class="mi">41</span><span class="p">,</span>
+        <span class="s2">&quot;light&quot;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="s2">&quot;humidity&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+    <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p>So, the lowest location number in this example is 35.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">part1</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">example</span><span class="p">))</span> <span class="o">==</span> <span class="mi">35</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p><end of problem description></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <h3><span id="part-1-solution:" href="part-1-solution:"> Part 1 Solution: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">IntervalOffset</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">interval</span><span class="p">:</span> <span class="nb">range</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>Maps an integer from one domain to another. This mapping is defined by a set
+of interval offset. Each of these consists of an interval in the domain and
+an offset that must be added to map that interval to the domain.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_line</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntervalOffset</span><span class="p">:</span>
+        <span class="n">destination_range_start</span><span class="p">,</span> <span class="n">source_range_start</span><span class="p">,</span> <span class="n">range_length</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">interval</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">source_range_start</span><span class="p">,</span> <span class="n">source_range_start</span> <span class="o">+</span> <span class="n">range_length</span><span class="p">),</span>
+            <span class="n">offset</span><span class="o">=</span><span class="n">destination_range_start</span> <span class="o">-</span> <span class="n">source_range_start</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">IntervalMap</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval_offsets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IntervalOffset</span><span class="p">]):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>Keep the interval offsets sorted so that binary search can be used.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">interval_offsets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">interval_offsets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">io</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>Map integer to new domain according to the interval offsets.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>First, find which interval offset this value may possibly fall in to.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">interval_index</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_offsets</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">io</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">interval_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_offsets</span><span class="p">[</span><span class="n">interval_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># If this goes -1, then no big deal.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>If the value falls in to the interval, apply the offset and return.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">interval_offset</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span> <span class="o">+</span> <span class="n">interval_offset</span><span class="o">.</span><span class="n">offset</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>Otherwise, no interval matches so return the value unchanged.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="n">Category</span> <span class="o">=</span> <span class="nb">str</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Almanac</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">seeds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">maps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Category</span><span class="p">,</span> <span class="n">Category</span><span class="p">],</span> <span class="n">IntervalMap</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">parse_almanac</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Almanac</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">read_stripped</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">puzzle_input</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <p>The first line has our seed numbers.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">seed_numbers</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">read_stripped</span><span class="p">()</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;seeds: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">read_stripped</span><span class="p">()</span>  <span class="c1"># Skip blank line after seeds line.</span>
+
+    <span class="n">maps</span> <span class="o">=</span> <span class="p">{}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <p><em>I&rsquo;m so tempted to turn this into a monster dictionary comprehension.</em></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">map_title_line</span> <span class="ow">in</span> <span class="n">puzzle_input</span><span class="p">:</span>
+        <span class="n">map_name</span> <span class="o">=</span> <span class="n">map_title_line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">source_category</span><span class="p">,</span> <span class="n">destination_category</span> <span class="o">=</span> <span class="n">map_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-to-&quot;</span><span class="p">)</span>
+        <span class="n">maps</span><span class="p">[</span><span class="n">source_category</span><span class="p">,</span> <span class="n">destination_category</span><span class="p">]</span> <span class="o">=</span> <span class="n">IntervalMap</span><span class="p">(</span>
+            <span class="n">IntervalOffset</span><span class="o">.</span><span class="n">from_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">read_stripped</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Almanac</span><span class="p">(</span><span class="n">seed_numbers</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <p>Build up a dictionary of keys and values by traversing the given maps using
+their names and interval maps. A dictonary of categories and values is
+started with a given category and value. Then applicable category mappings
+are discovered and followed successively to build up the dictionary with as
+much information as possible. Once no further info can be added, the
+dictionary is retruned.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">walk_maps</span><span class="p">(</span><span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Category</span><span class="p">,</span> <span class="n">Category</span><span class="p">],</span> <span class="n">IntervalMap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      <p>Start the info dictionary with the given category info.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="n">category</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      <p>Find another category we can map to from the current category.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">while</span> <span class="n">next_category</span> <span class="o">:=</span> <span class="nb">next</span><span class="p">((</span><span class="n">dest</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dest</span> <span class="ow">in</span> <span class="n">maps</span> <span class="k">if</span> <span class="n">src</span> <span class="o">==</span> <span class="n">category</span><span class="p">),</span> <span class="kc">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      <p>Map the current value into the new category&rsquo;s associated value.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">value</span> <span class="o">=</span> <span class="n">maps</span><span class="p">[(</span><span class="n">category</span><span class="p">,</span> <span class="n">next_category</span><span class="p">)]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>Add this category value to the info dictionary.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">info</span><span class="p">[</span><span class="n">next_category</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <p>Recurse into the next category.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">category</span> <span class="o">=</span> <span class="n">next_category</span>
+
+    <span class="k">return</span> <span class="n">info</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <p><solve part 1></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part1</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      <h3>Part 2:</h3>
+<p><paste in problem description here></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">almanac</span> <span class="o">=</span> <span class="n">parse_almanac</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">walk_maps</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">almanac</span><span class="o">.</span><span class="n">maps</span><span class="p">)[</span><span class="s2">&quot;location&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">almanac</span><span class="o">.</span><span class="n">seeds</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      <p>For example:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_part2</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <blockquote>
+<p><code>""</code> results in  <code>...</code>.</p>
+</blockquote>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">part2</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="o">...</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      <p><end of problem description></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <h3><span id="part-2-solution:" href="part-2-solution:"> Part 2 Solution: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-52'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-52'>#</a>
+      </div>
+      <p>Representation of many intervals.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">MultiInterval</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-53'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-53'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-54'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-54'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">((</span><span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rng</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simplify</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-55'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-55'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_simplify</span><span class="p">():</span>
+        <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-56'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-56'>#</a>
+      </div>
+      <p><solve part 2></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">part2</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">puzzle_input</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-58'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-58'>#</a>
+      </div>
+      <p>Print out part 1 solution</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;input.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">puzzle_input</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part 1:&quot;</span><span class="p">,</span> <span class="n">part1</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-59'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-59'>#</a>
+      </div>
+      <p>Print out part 2 solution</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;input.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">puzzle_input</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Part 2:&quot;</span><span class="p">,</span> <span class="n">part2</span><span class="p">(</span><span class="n">puzzle_input</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
