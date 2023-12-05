@@ -33,9 +33,12 @@ from __future__ import annotations
 
 import bisect
 import io
+from itertools import pairwise
 import logging
 from pathlib import Path
-from typing import Iterable, Iterator, NamedTuple, TextIO
+from typing import Iterable, NamedTuple, TextIO, overload
+
+from more_itertools import chunked
 
 
 def test_part1() -> None:
@@ -256,8 +259,19 @@ class IntervalMap:
         # Keep the interval offsets sorted so that binary search can be used.
         self.interval_offsets = sorted(interval_offsets, key=lambda io: io.interval.start)
 
+    @overload
     def get(self, value: int) -> int:
+        ...
+
+    @overload
+    def get(self, value: MultiInterval) -> MultiInterval:
+        ...
+
+    def get(self, value):
         """Map integer to new domain according to the interval offsets."""
+        if isinstance(value, MultiInterval):
+            return self._multi_interval_get(value)
+
         # First, find which interval offset this value may possibly fall in to.
         interval_index = bisect.bisect(self.interval_offsets, value, key=lambda io: io.interval.start)
         interval_offset = self.interval_offsets[interval_index - 1]  # If this goes -1, then no big deal.
@@ -268,6 +282,30 @@ class IntervalMap:
 
         # Otherwise, no interval matches so return the value unchanged.
         return value
+
+    def _multi_interval_get(self, value: MultiInterval) -> MultiInterval:
+        # First, chop up all of the intervals falling on mapper boundaries
+        logging.debug("Before chopping: %r", value.intervals)
+
+        chop_points = [io.interval.start for io in self.interval_offsets]
+        chop_points.append(self.interval_offsets[-1].interval.stop)
+        chopped_intervals = list(self._chopped_intervals(value.intervals, chop_points))
+
+        logging.debug("After chopping: %r", list(chopped_intervals))
+
+        # Then, map all the chopped intervals to their new values
+        mapped_intervals = [(self.get(start), self.get(stop - 1) + 1) for start, stop in chopped_intervals]
+
+        logging.debug("After mapping: %r", list(mapped_intervals))
+
+        return MultiInterval(mapped_intervals)
+
+    @staticmethod
+    def _chopped_intervals(intervals: list[tuple[int, int]], boundaries: list[int]) -> Iterable[tuple[int, int]]:
+        """Chop up the given intervals on the given boundaries."""
+        for start, stop in intervals:
+            chop_points = [b for b in boundaries if start < b < stop]
+            yield from pairwise([start, *chop_points, stop])
 
 
 Category = str
@@ -299,7 +337,19 @@ def parse_almanac(puzzle_input: TextIO) -> Almanac:
     return Almanac(seed_numbers, maps)
 
 
+@overload
 def walk_maps(category: str, value: int, maps: dict[tuple[Category, Category], IntervalMap]) -> dict[str, int]:
+    ...
+
+
+@overload
+def walk_maps(
+    category: str, value: MultiInterval, maps: dict[tuple[Category, Category], IntervalMap]
+) -> dict[str, MultiInterval]:
+    ...
+
+
+def walk_maps(category, value, maps):
     """
     Build up a dictionary of keys and values by traversing the given maps using
     their names and interval maps. A dictonary of categories and values is
@@ -341,8 +391,43 @@ def part1(puzzle_input: TextIO) -> ...:
 
 def test_part2() -> None:
     """For example:"""
+    example = """\
+seeds: 79 14 55 13
+
+seed-to-soil map:
+50 98 2
+52 50 48
+
+soil-to-fertilizer map:
+0 15 37
+37 52 2
+39 0 15
+
+fertilizer-to-water map:
+49 53 8
+0 11 42
+42 0 7
+57 7 4
+
+water-to-light map:
+88 18 7
+18 25 70
+
+light-to-temperature map:
+45 77 23
+81 45 19
+68 64 13
+
+temperature-to-humidity map:
+0 69 1
+1 0 69
+
+humidity-to-location map:
+60 56 37
+56 93 4"""  # pycco needs this
+
     # > `""` results in  `...`.
-    assert part2(io.StringIO("")) == ...
+    assert part2(io.StringIO(example)) == 46
 
 
 """
@@ -356,16 +441,60 @@ class MultiInterval:
     """Representation of many intervals."""
 
     def __init__(self, intervals: Iterable[tuple[int, int]]):
-        self.ranges = sorted((range(start, stop) for start, stop in intervals), key=lambda rng: rng.start)
-        self._simplify()
+        self.intervals = list(self._simplified_intervals(intervals))
 
-    def _simplify():
-        pass
+    @staticmethod
+    def _simplified_intervals(intervals: Iterable[tuple[int, int]]) -> Iterable[tuple[int, int]]:
+        intervals = sorted(
+            (start, stop)
+            for start, stop in intervals
+            if start < stop  # Dump any empty intervals
+        )
+        if not intervals:
+            return
+
+        start, stop = intervals[0]
+
+        for next_start, next_stop in intervals[1:]:
+            # There there is a gap in the intervals, yield what you've got.
+            if next_start > stop:
+                yield start, stop
+                start, stop = next_start, next_stop
+                continue
+
+            # Combine overlapping intervals
+            stop = max(stop, next_stop)
+
+        yield start, stop
+
+    def __eq__(self, other: MultiInterval) -> bool:
+        return self.intervals == other.intervals
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__qualname__}({self.intervals})"
+
+    def min_value(self) -> int:
+        return self.intervals[0][0]
 
 
-def part2(puzzle_input: TextIO) -> ...:
+def test_multi_interval() -> None:
+    multi_interval = MultiInterval([(1, 3), (1, 1), (1, 2), (5, 6)])
+    assert multi_interval.intervals == [(1, 3), (5, 6)]
+
+    assert multi_interval.min_value() == 1
+
+    seeds = MultiInterval([(79, 79 + 20)])
+    mapper = IntervalMap([IntervalOffset.from_line("50 98 2"), IntervalOffset.from_line("52 50 48")])
+    assert mapper.get(seeds) == MultiInterval([(50, 51), (81, 100)])
+    assert mapper.get(MultiInterval([(79, 105)])) == MultiInterval([(50, 52), (81, 105)])
+
+
+def part2(puzzle_input: TextIO) -> int:
     """<solve part 2>"""
-    return puzzle_input
+    almanac = parse_almanac(puzzle_input)
+
+    seeds = [MultiInterval([(start, start + count)]) for start, count in chunked(almanac.seeds, 2)]
+    return min(walk_maps("seed", seed, almanac.maps)["location"].min_value() for seed in seeds)
 
 
 if __name__ == "__main__":
