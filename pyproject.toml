@@ -37,11 +37,13 @@ ignore = [
     "S101",  # I need asserts for pytest
     "PLR2004",  # I use magic numbers in pytests
     "T201",  # I'm going to print, so deal
-    "COM812", "ISC001",  # Recommended to work with the ruff formatter
-    "D101",  # Maybe I don't want to put a docstring on a tiny class
-    "D103", "D105",  # Make docstrings optional
-    "ANN102",  # Don't make me type cls
+    "COM812", "ISC001",  # Recommendations when working with the ruff formatter
+    "D101", "D103", "D105", "D107",  # Make docstrings optional
+    "ANN101", "ANN102",  # Super obvious typehints
 ]
+
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true  # make optional __init__ return annotation - ANN204
 
 [tool.mypy]
 
