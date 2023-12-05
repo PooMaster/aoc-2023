@@ -73,8 +73,7 @@ temperature-to-humidity map:
 
 humidity-to-location map:
 60 56 37
-56 93 4
-"""  # blah
+56 93 4"""  # pycco needs this
 
     almanac = parse_almanac(io.StringIO(example))
 
@@ -351,6 +350,17 @@ def test_part2() -> None:
 """
 
 # === Part 2 Solution: ===
+
+
+class MultiInterval:
+    """Representation of many intervals."""
+
+    def __init__(self, intervals: Iterable[tuple[int, int]]):
+        self.ranges = sorted((range(start, stop) for start, stop in intervals), key=lambda rng: rng.start)
+        self._simplify()
+
+    def _simplify():
+        pass
 
 
 def part2(puzzle_input: TextIO) -> ...:
