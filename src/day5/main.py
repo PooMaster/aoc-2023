@@ -34,7 +34,6 @@ from __future__ import annotations
 import bisect
 import io
 from itertools import pairwise
-import logging
 from pathlib import Path
 from typing import Iterable, NamedTuple, TextIO, overload
 
@@ -285,18 +284,12 @@ class IntervalMap:
 
     def _multi_interval_get(self, value: MultiInterval) -> MultiInterval:
         # First, chop up all of the intervals falling on mapper boundaries
-        logging.debug("Before chopping: %r", value.intervals)
-
         chop_points = [io.interval.start for io in self.interval_offsets]
         chop_points.append(self.interval_offsets[-1].interval.stop)
         chopped_intervals = list(self._chopped_intervals(value.intervals, chop_points))
 
-        logging.debug("After chopping: %r", list(chopped_intervals))
-
         # Then, map all the chopped intervals to their new values
         mapped_intervals = [(self.get(start), self.get(stop - 1) + 1) for start, stop in chopped_intervals]
-
-        logging.debug("After mapping: %r", list(mapped_intervals))
 
         return MultiInterval(mapped_intervals)
 
