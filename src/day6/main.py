@@ -7,8 +7,6 @@ from __future__ import annotations
 
 import io
 import math
-import operator
-from functools import reduce
 from pathlib import Path
 from typing import NamedTuple, TextIO
 
@@ -66,7 +64,7 @@ def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
     races = parse_races(puzzle_input)
     race_ways_to_win = (len(winning_range(r)) for r in races)
-    return reduce(operator.mul, race_ways_to_win, 1)
+    return math.prod(race_ways_to_win)
 
 
 """

@@ -26,11 +26,10 @@ them back in the bag. He'll do this a few times per game.
 from __future__ import annotations
 
 import io
-import operator
+import math
 import re
 from collections import Counter
 from enum import Enum, auto
-from functools import reduce
 from pathlib import Path
 from typing import Iterable, TextIO
 
@@ -201,7 +200,7 @@ def get_min_bag(turns: list[Turn]) -> Counter[Cube]:
 
 def cubes_power(bag: Counter[Cube]) -> int:
     """Return the power of a set of cubes."""
-    return reduce(operator.mul, (bag.get(color, 0) for color in Cube))
+    return math.prod(bag.get(color, 0) for color in Cube)
 
 
 def part2(puzzle_input: TextIO) -> int:

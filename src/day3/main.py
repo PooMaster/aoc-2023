@@ -7,9 +7,8 @@ from __future__ import annotations
 
 import io
 import logging
-import operator
+import math
 import re
-from functools import reduce
 from itertools import chain, product
 from pathlib import Path
 from typing import Iterable, NamedTuple, TextIO
@@ -158,7 +157,7 @@ def part2(puzzle_input: TextIO) -> int:
         gear_labels = [label for label in labels if label.pos & gear_adjacents]
         if len(gear_labels) != 2:
             continue
-        gear_ratios += reduce(operator.mul, (label.number for label in gear_labels))
+        gear_ratios += math.prod(label.number for label in gear_labels)
 
     return gear_ratios
 
