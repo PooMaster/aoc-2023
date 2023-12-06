@@ -28,6 +28,7 @@ def lint(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Check types with mypy."""
     args = session.posargs or locations
+    install_dependencies(session)
     install_with_constraints(
         session,
         "mypy",
@@ -39,6 +40,7 @@ def mypy(session: Session) -> None:
 def xdoctest(session: Session) -> None:
     """Run examples with xdoctest."""
     args = session.posargs or ["all"]
+    install_dependencies(session)
     install_with_constraints(session, "xdoctest", "pygments")
     for package in packages:
         session.run("python", "-m", "xdoctest", str(package), *args)
@@ -47,6 +49,7 @@ def xdoctest(session: Session) -> None:
 @nox.session(python=["3.10"])
 def pytest(session: Session) -> None:
     """Run tests with pytest."""
+    install_dependencies(session)
     install_with_constraints(session, "pytest")
     if session.posargs:
         for arg in session.posargs:
@@ -74,5 +77,23 @@ def install_with_constraints(
             external=True,
         )
         session.install(f"--constraint={requirements.name}", *args, **kwargs)
+
+    Path(requirements.name).unlink()
+
+
+def install_dependencies(
+    session: Session,
+) -> None:
+    """Install required non-dev modules in constrained environment."""
+    with tempfile.NamedTemporaryFile(delete=False) as requirements:
+        session.run(
+            "poetry",
+            "export",
+            "--without-hashes",
+            "--format=requirements.txt",
+            f"--output={requirements.name}",
+            external=True,
+        )
+        session.install("-r", requirements.name)
 
     Path(requirements.name).unlink()
