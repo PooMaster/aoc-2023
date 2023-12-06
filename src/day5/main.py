@@ -33,7 +33,7 @@ from __future__ import annotations
 
 import bisect
 import io
-from itertools import pairwise
+from itertools import chain, pairwise
 from pathlib import Path
 from typing import Iterable, NamedTuple, TextIO, overload
 
@@ -284,9 +284,8 @@ class IntervalMap:
 
     def _multi_interval_get(self, value: MultiInterval) -> MultiInterval:
         # First, chop up all of the intervals falling on mapper boundaries
-        chop_points = [io.interval.start for io in self.interval_offsets]
-        chop_points.append(self.interval_offsets[-1].interval.stop)
-        chopped_intervals = list(self._chopped_intervals(value.intervals, chop_points))
+        chop_points = set(chain.from_iterable((io.interval.start, io.interval.stop) for io in self.interval_offsets))
+        chopped_intervals = list(self._chopped_intervals(value.intervals, sorted(chop_points)))
 
         # Then, map all the chopped intervals to their new values
         mapped_intervals = [(self.get(start), self.get(stop - 1) + 1) for start, stop in chopped_intervals]
@@ -368,7 +367,7 @@ def walk_maps(category, value, maps):
     return info
 
 
-def part1(puzzle_input: TextIO) -> ...:
+def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
     almanac = parse_almanac(puzzle_input)
 
@@ -460,7 +459,9 @@ class MultiInterval:
 
         yield start, stop
 
-    def __eq__(self, other: MultiInterval) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, MultiInterval):
+            return NotImplemented
         return self.intervals == other.intervals
 
     def __repr__(self) -> str:
