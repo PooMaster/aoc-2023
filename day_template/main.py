@@ -11,8 +11,11 @@ from typing import TextIO
 
 def test_part1() -> None:
     """For example:"""
+    example = """\
+""" #
+
     # > `""` results in  `...`.
-    assert part1(io.StringIO("")) == ...
+    assert part1(io.StringIO(example)) == ...
 
 
 """
@@ -36,8 +39,11 @@ def part1(puzzle_input: TextIO) -> ...:
 
 def test_part2() -> None:
     """For example:"""
+    example = """\
+""" #
+
     # > `""` results in  `...`.
-    assert part2(io.StringIO("")) == ...
+    assert part2(io.StringIO(example)) == ...
 
 
 """
