@@ -25,9 +25,9 @@ def test_part1() -> None:
 # === Part 1 Solution: ===
 
 
-def part1(puzzle_input: TextIO) -> ...:
+def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
-    return puzzle_input
+    return 0
 
 
 """
@@ -53,9 +53,9 @@ def test_part2() -> None:
 # === Part 2 Solution: ===
 
 
-def part2(puzzle_input: TextIO) -> ...:
+def part2(puzzle_input: TextIO) -> int:
     """<solve part 2>"""
-    return puzzle_input
+    return 0
 
 
 if __name__ == "__main__":
