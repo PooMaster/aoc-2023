@@ -60,7 +60,7 @@ def predicted_next_value(sequence: list[int]) -> int:
     return sum(seq[-1] for seq in diff_sequences(sequence))
 
 
-def part1(puzzle_input: TextIO) -> ...:
+def part1(puzzle_input: TextIO) -> int:
     """<solve part 1>"""
     sequences = parse(puzzle_input)
 
@@ -104,7 +104,7 @@ def predicted_prev_value(sequence: list[int]) -> int:
     return reduce(lambda a,b: b - a, reversed(firsts), 0)
 
 
-def part2(puzzle_input: TextIO) -> ...:
+def part2(puzzle_input: TextIO) -> int:
     """<solve part 2>"""
     sequences = parse(puzzle_input)
 
